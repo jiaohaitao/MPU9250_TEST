@@ -1,39 +1,349 @@
-//=================================================================================
-//	Project_Name:	 SysTick
-//	Decription:		learn how to use the systick 
-//	Date:		  2012Äê9ÔÂ15ÈÕ21:22:56
-//	Made By:Haitao Jiao,computer engineering dept ,AYIT
-//				You should love english and must.
-//==================================================================================
-//		MY STEP
-//step0: rename the pjc name,revamp the "read me"
-//step1: include rcc.h,gpio.h,led.h,systick.h & add files:led.c,systick.c
-//		remove useless files of the lib(stm32f10x_ppp.h)
-//step2: edit the systick.c
-//step3: edit the it.c/SysTick_Handler(void) 
-//step4: edit the main
-//±¾Àý³ÌÓÃµ½ÁËsystickÖÐ¶Ï£¬Ê×ÏÈsystick¡ªInitÖ»ÊÇµ÷ÓÃÁËSysTick_Config()º¯Êý£¬ËüÊÇÊôÓÚÄÚºË²ãµÄCortex-M3Í¨ÓÃº¯Êý£¬
-//Î»ÓÚcore_cm3.hÎÄ¼þÖÐ £ºÕâ¸öº¯ÊýÆô¶¯ÁËSysTick timer£»²¢°ÑËüÅäÖÃÎª¼ÆÊýÖÁ0Ê±ÒýÆðÖÐ¶Ï£»ÊäÈëµÄ²ÎÊýticksÎªÁ½¸öÖÐ¶ÏÖ®¼äµÄÂö³åÊý£¬
-//¼´Ïà¸ôticks¸öÊ±ÖÓÖÜÆÚ»áÒýÆðÒ»´ÎÖÐ¶Ï£»ÅäÖÃSysTick³É¹¦Ê±·µ»Ø0£¬³ö´í½ø·µ»Ø1¡£ ²¢ÖÆ¶¨ÁËsystickµÄÊ±ÖÓÑ¡Ôñ
-//Ò²¾ÍÊÇËµsystick-init£¨£©º¯Êý×öÁËsystickÏà¹ØµÄ¹¤×÷£¬²¢ÉùÃ÷ÁËÖÐ¶Ï¡£ÎÒÃÇÖ»ÐèÔÚÖÐ¶Ïº¯ÊýÌí¼Ó×Ô¼ºµÄ´úÂë¾ÍºÃÁË
 #include "stm32f10x.h"
-//#include"stm32f10x_conf.h" //as this .h haven been include in stm32f10x.h
 #include"led.h"
 #include"systick.h"
-//SysTickµÄÖÐ¶ÏÊÇÔÚÎÄ¼þcore_cm3.hµÄº¯ÊýÅäÖÃµÄ£¬Ã»ÓÐÊ¹ÓÃNVICÀ´ÅäÖÃÖÐ¶Ï£¬ËùÒÔ¿É²»Ìí¼Ómisc.cÎÄ¼þ ¡£
-//misc.cÎÄ¼þÊÇÓÃÀ´ÅäÖÃnvicÖÐ¶ÏµÄ
-//¶øcore_cm3.hÔÚ°üº¬stm32f10x.hÍ·ÎÄ¼þÊ±ÒÑ±»Ìí¼Ó½ø¹¤³ÌÁË¡£
-uint32_t t=1000;
-int main(void)
+uint32_t t=1000000;
+
+#define I2C_SCL_0() GPIOB->ODR &= ~(1 << 6)
+#define I2C_SCL_1() GPIOB->ODR |= 1 << 6
+#define I2C_SDA_0() GPIOB->ODR &= ~(1 << 7)
+#define I2C_SDA_1() GPIOB->ODR |= 1 << 7
+#define I2C_READ_SDA() GPIOB->IDR & (1 << 7)
+
+#define HMC5883L_ADDRESS 0x3c
+
+
+
+void Soft_Delay(uint32_t t)
 {
-	//my code
-	LED_GPIO_Config();
-	SysTick_Init();
-	while(1)
+	while(t --);
+}
+
+void Soft_I2C_Delay(void)
+{
+	uint32_t t = 0;			//72MHz,IARä¼˜åŒ–çº§åˆ«ï¼šlow, 
+								//t = 10:200 ~ 270KHz
+								//t = 3:340 ~ 440KHz;
+								//t = 2:350 ~ 480KHz;
+								//t = 1:400 ~ 530KHz;
+								//t = 0:440 ~ 610KHz;
+	Soft_Delay(t);
+}
+
+void Soft_I2C_Start(void)
+{
+	I2C_SDA_1();
+	I2C_SCL_1();
+	Soft_I2C_Delay();		//1.5us,æ¥æºé€»è¾‘åˆ†æžä»ª
+	I2C_SDA_0();
+	Soft_I2C_Delay();
+	I2C_SDA_0();
+	Soft_I2C_Delay();
+}
+
+void Soft_I2C_Stop(void)
+{
+
+	I2C_SCL_0();			
+	Soft_I2C_Delay();
+	I2C_SDA_0();
+	Soft_I2C_Delay();
+	I2C_SCL_1();
+	Soft_I2C_Delay();
+	I2C_SDA_1();
+	Soft_I2C_Delay();
+}
+void Soft_I2C_Initial(void)
+{
+	RCC->APB2ENR |= 1 << 3;		//PB
+	GPIOB->CRL &= 0x00ffffff;	//PB7 SDA,PB6 SCL
+	GPIOB->CRL |= 0x73000000;	//PB7 OD,PB6 PP
+	I2C_SDA_1();
+	I2C_SCL_1();
+}
+void Soft_I2C_Write_Byte(uint8_t data)
+{
+	uint8_t i = 0;
+	
+	for(i = 0;i < 8;i ++)
 	{
-		LED_ON();
-		Delay_us(t);
-		LED_OFF();
-		Delay_us(t);
+		I2C_SCL_0();
+		Soft_I2C_Delay();
+		
+		if(data & 0x80)
+			I2C_SDA_1();
+		else
+			I2C_SDA_0();
+		
+		data <<= 1;
+		Soft_I2C_Delay();
+		I2C_SCL_1();
+		Soft_I2C_Delay();		
+	}
+	I2C_SCL_0();
+}
+
+uint8_t Soft_I2C_Read_Byte(void)
+{
+	uint8_t i = 0;
+	uint8_t data = 0;
+	
+	I2C_SDA_1();
+	
+	for(i = 0;i < 8;i ++)
+	{
+		data <<= 1;
+		
+		I2C_SCL_0();
+		Soft_I2C_Delay();
+		I2C_SCL_1();
+		Soft_I2C_Delay();
+		
+		if(I2C_READ_SDA())
+			data |= 0x01;
+		else
+			;	
+	}
+	I2C_SCL_0();
+	
+	return data;
+}
+
+void Soft_I2C_Wait_ACK(void)
+{
+
+	I2C_SCL_0();
+	Soft_I2C_Delay();
+	I2C_SDA_1();				//é‡Šæ”¾SDA
+	Soft_I2C_Delay();
+	I2C_SCL_1();
+	Soft_I2C_Delay();
+	if(I2C_READ_SDA() == 0)
+	{
+		I2C_SCL_0();
+		Soft_I2C_Delay();
+		return ;
+	}	
+	else
+		;
+		
+	I2C_SCL_0();
+	Soft_I2C_Delay();
+}
+
+
+
+void Soft_I2C_Send_ACK(uint8_t type)	//0:ack;1:nack
+{
+	I2C_SCL_0();
+	Soft_I2C_Delay();
+	if(type == 0)
+		I2C_SDA_0();
+	else if(type == 1)
+		I2C_SDA_1();
+	Soft_I2C_Delay();
+	
+	I2C_SCL_1();
+	Soft_I2C_Delay();
+	I2C_SCL_0();
+	Soft_I2C_Delay();
+}
+
+void Soft_I2C_Write_Device_Register(uint8_t device_address,
+									uint8_t register_address,
+									uint8_t data)
+{
+	Soft_I2C_Start();
+	Soft_I2C_Write_Byte(device_address);
+	Soft_I2C_Wait_ACK();
+	Soft_I2C_Write_Byte(register_address);
+	Soft_I2C_Wait_ACK();
+	Soft_I2C_Write_Byte(data);
+	Soft_I2C_Wait_ACK();
+	Soft_I2C_Stop();
+}
+
+void Soft_I2C_Read_Data(uint8_t device_address,
+						uint8_t register_address,
+						uint8_t *pbuffer,
+						uint8_t count)
+{
+	Soft_I2C_Start();
+	Soft_I2C_Write_Byte(device_address);
+	Soft_I2C_Wait_ACK();
+	Soft_I2C_Write_Byte(register_address);
+	Soft_I2C_Wait_ACK();
+	
+	Soft_I2C_Start();
+	Soft_I2C_Write_Byte(device_address + 1);
+	Soft_I2C_Wait_ACK();
+	
+	for(;count >= 2;count --,pbuffer ++)
+	{
+		*pbuffer = Soft_I2C_Read_Byte();
+		Soft_I2C_Send_ACK(0);
+	}
+	
+	*pbuffer = Soft_I2C_Read_Byte();
+	Soft_I2C_Send_ACK(1);
+	Soft_I2C_Stop();
+}
+
+
+
+uint8_t mpu_read_data[14] = {0,};
+short ax = 0,ay = 0,az = 0,gx = 0,gy = 0,gz = 0;	
+#define MPU9250_SLAVE_ADDRESS  		0xd0
+#define AK8963_SLAVE_ADDRESS (0x0c << 1)
+uint8_t ak8963_read_data[7] = {0,};
+int16_t mx = 0,my = 0,mz = 0;
+	
+void MPU9250_Initial(void)
+{
+	Soft_I2C_Write_Device_Register(MPU9250_SLAVE_ADDRESS,0x6B, 0x00);	    
+	Soft_I2C_Write_Device_Register(MPU9250_SLAVE_ADDRESS,0x19 , 0x07);	    
+	Soft_I2C_Write_Device_Register(MPU9250_SLAVE_ADDRESS,0x1A , 0x06);	        
+	Soft_I2C_Write_Device_Register(MPU9250_SLAVE_ADDRESS,0x1C , 0x08);	 
+	Soft_I2C_Write_Device_Register(MPU9250_SLAVE_ADDRESS,0x1B, 0x18); 
+	Soft_I2C_Write_Device_Register(MPU9250_SLAVE_ADDRESS,0x37, 0x02);		//pass through
+}
+
+
+void AK8963_Initial(void)
+{
+
+	Soft_I2C_Write_Device_Register(AK8963_SLAVE_ADDRESS,0x0a, 0x16);		//è¿žç»­æ¨¡å¼2,100Hzï¼Œ16bit
+}
+
+
+void USART1_Config()
+{
+	
+	GPIO_InitTypeDef GPIO_InitStructure;
+	USART_InitTypeDef USART_InitStructure;
+	
+	
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE);
+
+	
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+	USART_InitStructure.USART_BaudRate = 115200;
+	
+	USART_InitStructure.USART_WordLength = USART_WordLength_8b;
+	
+	USART_InitStructure.USART_StopBits = USART_StopBits_1;
+	
+	USART_InitStructure.USART_Parity = USART_Parity_No ;
+	
+	USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
+	
+	USART_InitStructure.USART_Mode = USART_Mode_Rx | USART_Mode_Tx;
+
+	USART_Init(USART1, &USART_InitStructure);
+	
+	USART_Cmd(USART1, ENABLE);
+}
+#define BYTE0(dwTemp)       (*(char *)(&dwTemp))
+#define BYTE1(dwTemp)       (*((char *)(&dwTemp) + 1))
+#define BYTE2(dwTemp)       (*((char *)(&dwTemp) + 2))
+#define BYTE3(dwTemp)       (*((char *)(&dwTemp) + 3))
+void Send_Data(int16_t ad1,int16_t ad2,int16_t ad3,int16_t ad4,int16_t ad5,int16_t ad6,int16_t ad7,int16_t ad8,int16_t ad9)
+{
+	unsigned char i=0;
+	unsigned char _cnt=0,sum = 0;
+//	unsigned int _temp;
+	u8 data_to_send[50];
+
+	data_to_send[_cnt++]=0xAA;
+	data_to_send[_cnt++]=0xAA;
+	data_to_send[_cnt++]=0x02;
+	data_to_send[_cnt++]=0;
+	
+
+	data_to_send[_cnt++]=BYTE1(ad1);
+	data_to_send[_cnt++]=BYTE0(ad1);
+	data_to_send[_cnt++]=BYTE1(ad2);
+	data_to_send[_cnt++]=BYTE0(ad2);
+	data_to_send[_cnt++]=BYTE1(ad3);
+	data_to_send[_cnt++]=BYTE0(ad3);
+	
+	data_to_send[_cnt++]=BYTE1(ad4);
+	data_to_send[_cnt++]=BYTE0(ad4);
+	data_to_send[_cnt++]=BYTE1(ad5);
+	data_to_send[_cnt++]=BYTE0(ad5);
+	data_to_send[_cnt++]=BYTE1(ad6);
+	data_to_send[_cnt++]=BYTE0(ad6);
+	data_to_send[_cnt++]=BYTE1(ad7);
+	data_to_send[_cnt++]=BYTE0(ad7);
+	data_to_send[_cnt++]=BYTE1(ad8);
+	data_to_send[_cnt++]=BYTE0(ad8);
+	data_to_send[_cnt++]=BYTE1(ad9);
+	data_to_send[_cnt++]=BYTE0(ad9);
+	
+	data_to_send[3] = _cnt-4;
+	//oÂ¨ÂªDÂ¡Ãª?Â¨Â¦
+	for(i=0;i<_cnt;i++)
+		sum+= data_to_send[i];
+	data_to_send[_cnt++]=sum;
+	
+	for(i=0;i<_cnt;i++){
+		USART_SendData(USART1,data_to_send[i]);
+		while( USART_GetFlagStatus(USART1, USART_FLAG_TC) == RESET );
 	}
 }
+
+	
+
+
+
+int main(void)
+{
+	Soft_I2C_Initial();
+	MPU9250_Initial();
+	AK8963_Initial();
+	USART1_Config();
+	while(1)
+	{
+		Soft_Delay(20000);
+		Soft_Delay(20000);
+		Soft_Delay(20000);
+		
+		Soft_I2C_Read_Data(MPU9250_SLAVE_ADDRESS,0x3B,mpu_read_data,14);
+
+		ax = ((unsigned short)mpu_read_data[0] << 8) | mpu_read_data[1];
+		ay = ((unsigned short) mpu_read_data[2] << 8) | mpu_read_data[3];
+		az = ((unsigned short)mpu_read_data[4] << 8) | mpu_read_data[5];
+		gx = ((unsigned short)mpu_read_data[8] << 8) | mpu_read_data[9];
+		gy = ((unsigned short)mpu_read_data[10] << 8) | mpu_read_data[11];
+		gz = ((unsigned short)mpu_read_data[12] << 8) | mpu_read_data[13];
+	
+		Soft_I2C_Read_Data(AK8963_SLAVE_ADDRESS,0x03,ak8963_read_data,7);			//è¿žç»­æ¨¡å¼2ï¼š100Hzï¼Œå¿…é¡»è¯»0x09 ST2ï¼ï¼ï¼è¯»å®Œæ•°æ®åœ¨è¯»ST2ä½œä¸ºç»“æŸï¼ï¼ï¼				
+		
+		mx = ((uint16_t)ak8963_read_data[1] << 8) | ak8963_read_data[0];
+		my = ((uint16_t)ak8963_read_data[3] << 8) | ak8963_read_data[2];
+		mz = ((uint16_t)ak8963_read_data[5] << 8) | ak8963_read_data[4];
+		
+		Send_Data(ax,ay,az,gx,gy,gz,mx,my,mz);
+	}
+}
+//int main(void)
+//{
+//	//my code
+//	LED_GPIO_Config();
+//	SysTick_Init();
+//	while(1)
+//	{
+//		LED_ON();
+//		Delay_us(t);
+//		LED_OFF();
+//		Delay_us(t);
+//	}
+//}
