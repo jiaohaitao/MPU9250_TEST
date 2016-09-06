@@ -1,0 +1,12 @@
+..\output\mpu9250.o: mpu9250.c
+..\output\mpu9250.o: mpu9250.h
+..\output\mpu9250.o: ..\CMSIS\stm32f10x.h
+..\output\mpu9250.o: ..\CMSIS\core_cm3.h
+..\output\mpu9250.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdint.h
+..\output\mpu9250.o: ..\CMSIS\system_stm32f10x.h
+..\output\mpu9250.o: ..\USER\stm32f10x_conf.h
+..\output\mpu9250.o: ..\LIB\inc\stm32f10x_gpio.h
+..\output\mpu9250.o: ..\CMSIS\stm32f10x.h
+..\output\mpu9250.o: ..\LIB\inc\stm32f10x_rcc.h
+..\output\mpu9250.o: ..\LIB\inc\stm32f10x_usart.h
+..\output\mpu9250.o: ..\LIB\inc\misc.h

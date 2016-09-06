@@ -5,6 +5,7 @@
 "..\output\led.o"
 "..\output\imu_init_position.o"
 "..\output\inv_imu_app.o"
+"..\output\mpu9250_driver.o"
 "..\output\misc.o"
 "..\output\stm32f10x_gpio.o"
 "..\output\stm32f10x_rcc.o"

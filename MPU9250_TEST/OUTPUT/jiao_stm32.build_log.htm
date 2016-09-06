@@ -4,78 +4,53 @@
 <h1>µVision Build Log</h1>
 <h2>Project:</h2>
 E:\GitHub\MPU9250_TEST\MPU9250_TEST\USER\Systick.uvproj
-Project File Date:  09/05/2016
+Project File Date:  09/06/2016
 
 <h2>Output:</h2>
 Build target 'Systick'
-compiling main.c...
+linking...
+Program Size: Code=16680 RO-data=880 RW-data=192 ZI-data=2704  
+FromELF: creating hex file...
+"..\OUTPUT\jiao_stm32.axf" - 0 Error(s), 0 Warning(s).
+ile ends without a newline
+  #endif
+main.c(134): warning:  #177-D: variable "sum" was declared but never referenced
+        static unsigned char sum=0;
+main.c(260): warning:  #177-D: variable "rol_sum" was declared but never referenced
+        float rol_sum,pit_sum,yaw_sum;
+main.c(260): warning:  #177-D: variable "pit_sum" was declared but never referenced
+        float rol_sum,pit_sum,yaw_sum;
+main.c(260): warning:  #177-D: variable "yaw_sum" was declared but never referenced
+        float rol_sum,pit_sum,yaw_sum;
+main.c: 6 warnings, 0 errors
+compiling stm32f10x_it.c...
+compiling Systick.c...
+compiling led.c...
+compiling Imu_Init_Position.c...
 imu_init_position.h(5): warning:  #1-D: last line of file ends without a newline
   #endif
-main.c(407): warning:  #177-D: variable "sum" was declared but never referenced
-        static unsigned char sum=0;
-main.c(586): warning:  #177-D: variable "rol_sum" was declared but never referenced
-        float rol_sum,pit_sum,yaw_sum;
-main.c(586): warning:  #177-D: variable "pit_sum" was declared but never referenced
-        float rol_sum,pit_sum,yaw_sum;
-main.c(586): warning:  #177-D: variable "yaw_sum" was declared but never referenced
-        float rol_sum,pit_sum,yaw_sum;
-main.c: 5 warnings, 0 errors
+Imu_Init_Position.c(147): warning:  #1-D: last line of file ends without a newline
+  }
+Imu_Init_Position.c(70): warning:  #177-D: variable "temp_time" was declared but never referenced
+                unsigned long temp_time;        
+Imu_Init_Position.c: 3 warnings, 0 errors
+compiling inv_imu_app.c...
+compiling mpu9250_driver.c...
+mpu9250_driver.h(7): warning:  #1-D: last line of file ends without a newline
+  #endif
+mpu9250_driver.c: 1 warning, 0 errors
+compiling misc.c...
+compiling stm32f10x_gpio.c...
+compiling stm32f10x_rcc.c...
+compiling stm32f10x_usart.c...
+assembling startup_stm32f10x_hd.s...
+compiling core_cm3.c...
+compiling system_stm32f10x.c...
 linking...
-Program Size: Code=16784 RO-data=880 RW-data=220 ZI-data=2716  
+Program Size: Code=16680 RO-data=880 RW-data=192 ZI-data=2704  
 FromELF: creating hex file...
-"..\OUTPUT\jiao_stm32.axf" - 0 Error(s), 5 Warning(s).
-Load "..\\OUTPUT\\jiao_stm32.axf" 
-Set JLink Project File to "E:\GitHub\MPU9250_TEST\MPU9250_TEST\USER\JLinkSettings.ini"
-* JLink Info: Device "STM32F103RC" selected (256 KB flash, 48 KB RAM).
- 
-JLink info:
-------------
-DLL: V4.80g, compiled Feb 13 2014 20:50:02
-Firmware: J-Link ARM V8 compiled Nov 28 2014 13:44:46
-Hardware: V8.00
-S/N : 17935099 
-Feature(s) : RDI,FlashDL,FlashBP,JFlash 
- 
-* JLink Info: Found SWD-DP with ID 0x1BA01477
-* JLink Info: Found SWD-DP with ID 0x1BA01477
-* JLink Info: Found Cortex-M3 r1p1, Little endian.
-* JLink Info: FPUnit: 6 code (BP) slots and 2 literal slots
-* JLink Info: TPIU fitted.
-ROMTableAddr = 0xE00FF003
- 
-Target info:
-------------
-Device: STM32F103RC
-VTarget = 3.300V
-State of Pins: 
-TCK: 0, TDI: 1, TDO: 1, TMS: 1, TRES: 1, TRST: 1
-Hardware-Breakpoints: 6
-Software-Breakpoints: 8192
-Watchpoints:          4
-JTAG speed: 2000 kHz
- 
-Full Chip Erase Done.
-Programming Done.
-Verify OK.
-Application running ...
-</pre>
-</body>
-</html>
-Little endian.
-* JLink Info: FPUnit: 6 code (BP) slots and 2 literal slots
-* JLink Info: TPIU fitted.
-ROMTableAddr = 0xE00FF003
- 
-Target info:
-------------
-Device: STM32F103RC
-VTarget = 3.300V
-State of Pins: 
-TCK: 0, TDI: 1, TDO: 1, TMS: 1, TRES: 1, TRST: 1
-Hardware-Breakpoints: 6
-Software-Breakpoints: 8192
-Watchpoints:          4
-JTAG speed: 2000 kHz
+"..\OUTPUT\jiao_stm32.axf" - 0 Error(s), 10 Warning(s).
+ speed: 2000 kHz
  
 Full Chip Erase Done.
 Programming Done.

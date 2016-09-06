@@ -12,3 +12,4 @@
 ..\output\main.o: led.h
 ..\output\main.o: systick.h
 ..\output\main.o: imu_init_position.h
+..\output\main.o: mpu9250_driver.h
