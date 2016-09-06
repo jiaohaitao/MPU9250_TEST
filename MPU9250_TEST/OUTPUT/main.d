@@ -8,5 +8,7 @@
 ..\output\main.o: ..\CMSIS\stm32f10x.h
 ..\output\main.o: ..\LIB\inc\stm32f10x_rcc.h
 ..\output\main.o: ..\LIB\inc\stm32f10x_usart.h
+..\output\main.o: ..\LIB\inc\misc.h
 ..\output\main.o: led.h
 ..\output\main.o: systick.h
+..\output\main.o: imu_init_position.h

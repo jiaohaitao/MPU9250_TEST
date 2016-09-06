@@ -47,7 +47,10 @@ extern void TimingDelay_Decrement(void);
 void NMI_Handler(void)
 {
 }
-
+__asm void wait()
+{
+      BX lr
+}
 /**
   * @brief  This function handles Hard Fault exception.
   * @param  None
@@ -56,6 +59,7 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   /* Go to infinite loop when Hard Fault exception occurs */
+//	wait();
   while (1)
   {
   }

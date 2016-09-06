@@ -9,3 +9,4 @@
 ..\output\systick.o: ..\CMSIS\stm32f10x.h
 ..\output\systick.o: ..\LIB\inc\stm32f10x_rcc.h
 ..\output\systick.o: ..\LIB\inc\stm32f10x_usart.h
+..\output\systick.o: ..\LIB\inc\misc.h

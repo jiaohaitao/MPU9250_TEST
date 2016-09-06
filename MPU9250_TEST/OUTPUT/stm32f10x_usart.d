@@ -9,3 +9,4 @@
 ..\output\stm32f10x_usart.o: ..\CMSIS\stm32f10x.h
 ..\output\stm32f10x_usart.o: ..\LIB\inc\stm32f10x_rcc.h
 ..\output\stm32f10x_usart.o: ..\LIB\inc\stm32f10x_usart.h
+..\output\stm32f10x_usart.o: ..\LIB\inc\misc.h

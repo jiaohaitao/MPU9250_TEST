@@ -9,3 +9,4 @@
 ..\output\led.o: ..\CMSIS\stm32f10x.h
 ..\output\led.o: ..\LIB\inc\stm32f10x_rcc.h
 ..\output\led.o: ..\LIB\inc\stm32f10x_usart.h
+..\output\led.o: ..\LIB\inc\misc.h
