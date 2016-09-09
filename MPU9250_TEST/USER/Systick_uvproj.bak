@@ -432,6 +432,16 @@
               <FileType>1</FileType>
               <FilePath>.\Imu_Init_Position.c</FilePath>
             </File>
+            <File>
+              <FileName>inv_imu_app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\inv_imu_app.c</FilePath>
+            </File>
+            <File>
+              <FileName>mpu9250_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\mpu9250_driver.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

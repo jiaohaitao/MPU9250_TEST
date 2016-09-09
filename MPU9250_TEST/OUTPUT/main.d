@@ -13,3 +13,10 @@
 ..\output\main.o: systick.h
 ..\output\main.o: imu_init_position.h
 ..\output\main.o: mpu9250_driver.h
+..\output\main.o: inv_imu_app.h
+..\output\main.o: delay.h
+..\output\main.o: .\eMPL\inv_mpu_dmp_motion_driver.h
+..\output\main.o: .\eMPL\inv_mpu.h
+..\output\main.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\math.h
+..\output\main.o: usart.h
+..\output\main.o: stm32_iic.h

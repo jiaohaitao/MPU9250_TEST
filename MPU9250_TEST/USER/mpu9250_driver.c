@@ -1,6 +1,16 @@
 #include "mpu9250_driver.h"
 #include "stm32f10x.h"
 
+short IMU_MAG_OFFSET[3]={0xff01,0x014c,0xf90f};
+
+void MPU9250_GetMag_Offset(short *magoffset)
+{
+	magoffset[0]=IMU_MAG_OFFSET[0];
+	magoffset[1]=IMU_MAG_OFFSET[1];
+	magoffset[2]=IMU_MAG_OFFSET[2];
+}
+
+
 //---------------------IIC--------------------------
 uint32_t t=1000000;
 
@@ -253,12 +263,14 @@ void AK8963_Initial(void)
 	Soft_I2C_Write_Device_Register(AK8963_SLAVE_ADDRESS,0x0a, 0x11);		//????2,100Hz,16bit
 	*/
 		//MAG
-	 Soft_I2C_Write_Device_Register(GYRO_ADDRESS,0x37,0x02);//turn on Bypass Mode 
- //  Delayms(5);	
-	Soft_Delay(500000);
+	
  Soft_I2C_Write_Device_Register(MAG_ADDRESS,0x09,0x18);
 	Soft_Delay(500000);
    Soft_I2C_Write_Device_Register(MAG_ADDRESS,0x0A,0x11);
+	
+		 Soft_I2C_Write_Device_Register(GYRO_ADDRESS,0x37,0x02);//turn on Bypass Mode 
+ //  Delayms(5);	
+	Soft_Delay(500000);
 }
 
 void MPU9250_Initial(void)
@@ -327,9 +339,9 @@ void READ_MPU9250(short *acc,short *gyo,short *mag)
 	 
 	 //∂¡»°¥≈¡¶º∆
 	 //Soft_Delay(50000);	
-	 Soft_I2C_Write_Device_Register(GYRO_ADDRESS,0x37,0x02);//turn on Bypass Mode 
+	 //Soft_I2C_Write_Device_Register(GYRO_ADDRESS,0x37,0x02);//turn on Bypass Mode 
    //Soft_Delay(50000);	
-	 Soft_Delay(100000);	
+	 //Soft_Delay(100000);	
    Soft_I2C_Write_Device_Register(MAG_ADDRESS,0x0A,0x01);
    Soft_Delay(100000);	
 	 //Soft_Delay(1000000);

@@ -1,0 +1,12 @@
+..\output\stm32_iic.o: stm32_iic.c
+..\output\stm32_iic.o: stm32_iic.h
+..\output\stm32_iic.o: ..\CMSIS\stm32f10x.h
+..\output\stm32_iic.o: ..\CMSIS\core_cm3.h
+..\output\stm32_iic.o: d:\Keil_v5\ARM\ARMCC\bin\..\include\stdint.h
+..\output\stm32_iic.o: ..\CMSIS\system_stm32f10x.h
+..\output\stm32_iic.o: ..\USER\stm32f10x_conf.h
+..\output\stm32_iic.o: ..\LIB\inc\stm32f10x_gpio.h
+..\output\stm32_iic.o: ..\CMSIS\stm32f10x.h
+..\output\stm32_iic.o: ..\LIB\inc\stm32f10x_rcc.h
+..\output\stm32_iic.o: ..\LIB\inc\stm32f10x_usart.h
+..\output\stm32_iic.o: ..\LIB\inc\misc.h
